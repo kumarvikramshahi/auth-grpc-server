@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/kumarvikramshahi/grpc-server/core"
-	"github.com/kumarvikramshahi/grpc-server/pkg/auth/internal/model"
-	"github.com/kumarvikramshahi/grpc-server/pkg/domain"
+	"github.com/kumarvikramshahi/auth-grpc-server/core"
+	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/model"
+	"github.com/kumarvikramshahi/auth-grpc-server/pkg/domain"
 )
 
 type RedisAdaptor struct {

@@ -1,8 +1,8 @@
 package auth
 
 import (
-	serviceGrpc "github.com/kumarvikramshahi/grpc-server/pkg/auth/internal/grpc"
-	"github.com/kumarvikramshahi/grpc-server/pkg/auth/internal/services"
+	serviceGrpc "github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/grpc"
+	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/services"
 	"google.golang.org/grpc"
 )
 

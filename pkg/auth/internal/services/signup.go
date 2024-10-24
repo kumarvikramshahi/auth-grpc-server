@@ -3,10 +3,10 @@ package services
 import (
 	"context"
 
-	"github.com/kumarvikramshahi/grpc-server/pkg/auth/internal/adaptor"
-	"github.com/kumarvikramshahi/grpc-server/pkg/auth/internal/grpc"
-	"github.com/kumarvikramshahi/grpc-server/pkg/auth/internal/model"
-	"github.com/kumarvikramshahi/grpc-server/pkg/domain"
+	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/adaptor"
+	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/grpc"
+	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/model"
+	"github.com/kumarvikramshahi/auth-grpc-server/pkg/domain"
 	"github.com/redis/go-redis/v9"
 )
 

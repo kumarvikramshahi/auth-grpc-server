@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/kumarvikramshahi/grpc-server/configs"
+	"github.com/kumarvikramshahi/auth-grpc-server/configs"
 	"github.com/redis/go-redis/v9"
 )
 

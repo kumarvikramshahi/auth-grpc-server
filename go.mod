@@ -1,4 +1,4 @@
-module github.com/kumarvikramshahi/grpc-server
+module github.com/kumarvikramshahi/auth-grpc-server
 
 go 1.22.0
 

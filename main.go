@@ -8,10 +8,10 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/kumarvikramshahi/grpc-server/configs"
-	"github.com/kumarvikramshahi/grpc-server/core"
-	"github.com/kumarvikramshahi/grpc-server/pkg/auth"
-	"github.com/kumarvikramshahi/grpc-server/pkg/domain"
+	"github.com/kumarvikramshahi/auth-grpc-server/configs"
+	"github.com/kumarvikramshahi/auth-grpc-server/core"
+	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth"
+	"github.com/kumarvikramshahi/auth-grpc-server/pkg/domain"
 )
 
 func main() {

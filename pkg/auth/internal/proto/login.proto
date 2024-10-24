@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/kumarvikramshahi/grpc-server/auth/internal/grpc";
+option go_package = "github.com/kumarvikramshahi/auth-grpc-server/auth/internal/grpc";
 
 // just for fun -> not implemented
 message Activity {
