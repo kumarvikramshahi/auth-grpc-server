@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option go_package = "github.com/kumarvikramshahi/grpc-server/auth/internal/grpc";
+
+// just for fun -> not implemented
+message Activity {
+    string login_from = 1;
+    int64 login_timestamp = 2;
+    string login_approx_location = 3;
+}
+
+message UserRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginSuccessResponse {
+    string token = 2;
+    int64 expiry_timestamp = 3;
+}
+
+message LoginErrorResponse {
+    string message = 1;
+}
+
+message LoginResponse {
+    oneof response {
+        LoginSuccessResponse data = 1;
+        LoginErrorResponse error = 2;
+    }
+}
+
+service LogIn {
+    rpc LogInUser(UserRequest) returns (LoginResponse) {};
+}

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option go_package = "github.com/kumarvikramshahi/grpc-server/auth/internal/grpc";
+
+
+message SignUpSuccessResponse {
+  string message = 1;
+}
+
+message RegisterUserRequest {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+}
+
+message SignUpErrorResponse {
+  string message = 1;
+}
+
+message SignUpResponse {
+  oneof response {
+    SignUpSuccessResponse data = 1;
+    SignUpErrorResponse error = 2;
+  }
+}
+
+service SignUp {
+  rpc SignUpUser(RegisterUserRequest) returns (SignUpResponse) {};
+}
