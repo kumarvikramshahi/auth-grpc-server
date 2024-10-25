@@ -1,5 +1,5 @@
 # Auth grpc Server
-A GRPC server that uses grpc to communicate and use Redis to store data of user.
+A GRPC server that let user authenticate & uses grpc to communicate also uses Redis to store data of user.
 
 ### Quick Start
 To quicly run server, make sure you have properly installed go on your local then executes below commands.
