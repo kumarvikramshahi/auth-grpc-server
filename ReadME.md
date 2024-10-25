@@ -29,5 +29,39 @@ Used Hexagonal Architecture (Port-Adapter) to build the web server.
 
 ### Service have two endpoints for client:
 
-#### `LogIn/LogInUser` = login user
 ####  `SignUp/SignUpUser` = signup user
+Example request:
+```
+{
+    "email": "vikram1",
+    "password": "sdfjshdfkjsa",
+    "name": "sldk"
+}
+```
+Example response:
+```
+{
+    "data": {
+        "message": "User created"
+    }
+}
+```
+
+#### `LogIn/LogInUser` = login user
+Example request:
+```
+{
+    "email": "vikram",
+    "password": "sdfjshdfkjsa",
+}
+```
+Example response:
+```
+{
+    "data": {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpa3JhbTEiLCJleHBpcnkiOjE3Mjk5MjA3OTl9.ULei1kVLSekoklKe279ZjZOdFqoqFW5SULBlO0pX8KI",
+        "expiry_timestamp": "1729920799"
+    }
+}
+```
+
