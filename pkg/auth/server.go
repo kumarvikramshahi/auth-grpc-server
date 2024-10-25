@@ -1,12 +1,17 @@
 package auth
 
 import (
+	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/adaptor"
 	serviceGrpc "github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/grpc"
-	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/services"
+	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/port"
 	"google.golang.org/grpc"
 )
 
 func NewGrpcAuthServer(grpcServer *grpc.Server) {
-	serviceGrpc.RegisterLogInServer(grpcServer, &services.LoginService{})
-	serviceGrpc.RegisterSignUpServer(grpcServer, &services.SignUpService{})
+	redisAdaptor := adaptor.NewRedisAdaptor()
+
+	clientPort := port.NewAuthClientPort(redisAdaptor)
+
+	serviceGrpc.RegisterLogInServer(grpcServer, clientPort)
+	serviceGrpc.RegisterSignUpServer(grpcServer, clientPort)
 }

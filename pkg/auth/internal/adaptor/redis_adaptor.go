@@ -11,6 +11,11 @@ import (
 )
 
 type RedisAdaptor struct {
+	// add external things used by Auth service
+}
+
+func NewRedisAdaptor() *RedisAdaptor {
+	return &RedisAdaptor{}
 }
 
 func (redisAdaptor *RedisAdaptor) CreateUser(ctx context.Context, user model.User) error {

@@ -13,6 +13,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/kumarvikramshahi/auth-grpc-server/configs"
+	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal"
 	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/adaptor"
 	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/grpc"
 	"github.com/kumarvikramshahi/auth-grpc-server/pkg/domain"
@@ -20,13 +21,18 @@ import (
 )
 
 type LoginService struct {
-	grpc.UnimplementedLogInServer
-	redisAdaptor adaptor.RedisAdaptor
+	redisAdaptor *adaptor.RedisAdaptor
+}
+
+func NewLoginService(redisAdaptor *adaptor.RedisAdaptor) *LoginService {
+	return &LoginService{
+		redisAdaptor: redisAdaptor,
+	}
 }
 
 func (service *LoginService) LogInUser(
 	ctx context.Context, request *grpc.UserRequest,
-) (*grpc.LoginResponse, error) {
+) (*internal.LoginSuccess, error) {
 	// check if user exists or not
 	user, err := service.redisAdaptor.GetUser(ctx, request.Email)
 	if err != nil && err != redis.Nil {
@@ -60,13 +66,9 @@ func (service *LoginService) LogInUser(
 		return nil, customErr
 	}
 
-	return &grpc.LoginResponse{
-		Response: &grpc.LoginResponse_Data{
-			Data: &grpc.LoginSuccessResponse{
-				Token:           jwtToken,
-				ExpiryTimestamp: loginTime,
-			},
-		},
+	return &internal.LoginSuccess{
+		Token:           jwtToken,
+		ExpiryTimestamp: loginTime,
 	}, nil
 }
 

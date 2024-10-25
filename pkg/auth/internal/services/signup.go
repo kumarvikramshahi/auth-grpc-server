@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal"
 	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/adaptor"
 	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/grpc"
 	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/model"
@@ -14,13 +15,18 @@ import (
 )
 
 type SignUpService struct {
-	grpc.UnimplementedSignUpServer
-	redisAdaptor adaptor.RedisAdaptor
+	redisAdaptor *adaptor.RedisAdaptor
+}
+
+func NewSignUpService(redisAdaptor *adaptor.RedisAdaptor) *SignUpService {
+	return &SignUpService{
+		redisAdaptor: redisAdaptor,
+	}
 }
 
 func (service *SignUpService) SignUpUser(
 	ctx context.Context, request *grpc.RegisterUserRequest,
-) (*grpc.SignUpResponse, error) {
+) (*internal.SignUpSuccess, error) {
 	// check if user exists
 	_, err := service.redisAdaptor.GetUser(ctx, request.Email)
 	if err != nil && err != redis.Nil {
@@ -49,11 +55,7 @@ func (service *SignUpService) SignUpUser(
 		customErr := status.Error(codes.Internal, err.Error()+"- error in creating user")
 		return nil, customErr
 	}
-	return &grpc.SignUpResponse{
-		Response: &grpc.SignUpResponse_Data{
-			Data: &grpc.SignUpSuccessResponse{
-				Message: "User created",
-			},
-		},
+	return &internal.SignUpSuccess{
+		Message: "User created",
 	}, nil
 }
