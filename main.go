@@ -16,6 +16,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
+		log.Println("Pass enviroment name: dev/env")
 		return
 	}
 

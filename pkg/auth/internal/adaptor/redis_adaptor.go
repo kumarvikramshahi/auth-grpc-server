@@ -7,6 +7,7 @@ import (
 	"github.com/kumarvikramshahi/auth-grpc-server/core"
 	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/model"
 	"github.com/kumarvikramshahi/auth-grpc-server/pkg/domain"
+	"github.com/redis/go-redis/v9"
 )
 
 type RedisAdaptor struct {
@@ -35,7 +36,7 @@ func (redisAdaptor *RedisAdaptor) GetUser(ctx context.Context, email string) (mo
 	}
 
 	if len(result) == 0 {
-		return user, fmt.Errorf("user not found")
+		return user, redis.Nil
 	}
 
 	user.Name = result["name"]

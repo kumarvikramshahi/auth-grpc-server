@@ -8,6 +8,9 @@ import (
 	"log"
 	"time"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/kumarvikramshahi/auth-grpc-server/configs"
 	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/adaptor"
@@ -21,46 +24,40 @@ type LoginService struct {
 	redisAdaptor adaptor.RedisAdaptor
 }
 
-func (service *LoginService) ErrorResponse(message string) *grpc.LoginResponse {
-	return &grpc.LoginResponse{
-		Response: &grpc.LoginResponse_Error{
-			Error: &grpc.LoginErrorResponse{
-				Message: message,
-			},
-		},
-	}
-}
-
 func (service *LoginService) LogInUser(
 	ctx context.Context, request *grpc.UserRequest,
 ) (*grpc.LoginResponse, error) {
 	// check if user exists or not
 	user, err := service.redisAdaptor.GetUser(ctx, request.Email)
 	if err != nil && err != redis.Nil {
-		return nil, err
+		log.Println("[services/LogInUser] error in getting user", err)
+		customErr := status.Error(codes.Internal, err.Error())
+		return nil, customErr
 	}
 	if err == redis.Nil {
-		errResponse := service.ErrorResponse(domain.INVALID_EMAIL_PASS)
-		return errResponse, nil
+		errResponse := status.Error(codes.Unauthenticated, domain.INVALID_EMAIL_PASS)
+		return nil, errResponse
 	}
 
 	// if wrong pass
 	inputHashedPass, err := HashPassword(request.Password)
 	if err != nil {
-		errResponse := service.ErrorResponse(domain.SERVER_ERROR)
-		return errResponse, err
+		log.Println("[services/LogInUser] error in hashing pass", err)
+		customErr := status.Error(codes.Internal, err.Error()+"- error in hashing pass")
+		return nil, customErr
 	}
 	if inputHashedPass != user.Password {
-		errResponse := service.ErrorResponse(domain.INVALID_EMAIL_PASS)
-		return errResponse, nil
+		errResponse := status.Error(codes.Unauthenticated, domain.INVALID_EMAIL_PASS)
+		return nil, errResponse
 	}
 
 	// if user exists with correct pass
 	loginTime := time.Now().Add(time.Hour * 24).Unix()
 	jwtToken, err := CreateToken(user.Email, loginTime)
 	if err != nil {
-		log.Fatal(err)
-		return nil, err
+		log.Println(err)
+		customErr := status.Error(codes.Internal, err.Error()+"- error in creating JWT")
+		return nil, customErr
 	}
 
 	return &grpc.LoginResponse{

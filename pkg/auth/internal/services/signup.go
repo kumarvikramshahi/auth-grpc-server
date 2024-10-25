@@ -2,27 +2,20 @@ package services
 
 import (
 	"context"
+	"log"
 
 	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/adaptor"
 	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/grpc"
 	"github.com/kumarvikramshahi/auth-grpc-server/pkg/auth/internal/model"
 	"github.com/kumarvikramshahi/auth-grpc-server/pkg/domain"
 	"github.com/redis/go-redis/v9"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type SignUpService struct {
 	grpc.UnimplementedSignUpServer
 	redisAdaptor adaptor.RedisAdaptor
-}
-
-func (service *SignUpService) ErrorResponse(message string) *grpc.SignUpResponse {
-	return &grpc.SignUpResponse{
-		Response: &grpc.SignUpResponse_Error{
-			Error: &grpc.SignUpErrorResponse{
-				Message: message,
-			},
-		},
-	}
 }
 
 func (service *SignUpService) SignUpUser(
@@ -31,11 +24,13 @@ func (service *SignUpService) SignUpUser(
 	// check if user exists
 	_, err := service.redisAdaptor.GetUser(ctx, request.Email)
 	if err != nil && err != redis.Nil {
-		return nil, err
+		log.Println("[services/SignUpUser] error in fetching from redis - ", err)
+		customErr := status.Error(codes.Internal, err.Error()+" - error in fetching from redis")
+		return nil, customErr
 	}
 	if err != redis.Nil {
-		errResponse := service.ErrorResponse(domain.USER_ALREADY_EXIST)
-		return errResponse, nil
+		errResponse := status.Error(codes.AlreadyExists, domain.USER_ALREADY_EXIST)
+		return nil, errResponse
 	}
 
 	// if user doesn't exist
@@ -44,10 +39,16 @@ func (service *SignUpService) SignUpUser(
 	user.Name = request.Name
 	user.Password, err = HashPassword(request.Password)
 	if err != nil {
-		errResponse := service.ErrorResponse(domain.SERVER_ERROR)
-		return errResponse, err
+		log.Println("[services/LogInUser] error in hashing pass", err)
+		customErr := status.Error(codes.Internal, err.Error()+"- error hashing pass")
+		return nil, customErr
 	}
-	service.redisAdaptor.CreateUser(ctx, user)
+	err = service.redisAdaptor.CreateUser(ctx, user)
+	if err != nil {
+		log.Println("[services/LogInUser] error in creating user", err)
+		customErr := status.Error(codes.Internal, err.Error()+"- error in creating user")
+		return nil, customErr
+	}
 	return &grpc.SignUpResponse{
 		Response: &grpc.SignUpResponse_Data{
 			Data: &grpc.SignUpSuccessResponse{
